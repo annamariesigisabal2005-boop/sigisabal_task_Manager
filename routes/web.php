@@ -1,11 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TaskController;
 
-Route::view('/', 'welcome')->name('home');
-
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::view('dashboard', 'dashboard')->name('dashboard');
+Route::get('/', function () {
+    return redirect()->route('tasks.index');
 });
 
-require __DIR__.'/settings.php';
+Route::resource('tasks', TaskController::class);
