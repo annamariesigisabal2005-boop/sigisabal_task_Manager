@@ -1,127 +1,93 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Add Task</title>
+@extends('layouts.app')
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f3ff;
-            margin: 0;
-        }
+@section('content')
 
-        .navbar {
-            background: #6d28d9;
-            color: white;
-            padding: 18px 40px;
-        }
-
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            margin-left: 20px;
-        }
-
-        .container {
-            max-width: 700px;
-            margin: 40px auto;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-        }
-
-        label {
-            display: block;
-            margin-top: 15px;
-            font-weight: bold;
-        }
-
-        input, textarea, select {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        textarea {
-            height: 100px;
-        }
-
-        button {
-            margin-top: 20px;
-            background: #6d28d9;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .error {
-            color: #dc2626;
-            margin-top: 15px;
-        }
-    </style>
-</head>
-
-<body>
-
-<nav class="navbar">
-    <strong>Personal Task Manager</strong>
-
-    <a href="{{ route('dashboard') }}">Dashboard</a>
-    <a href="{{ route('tasks.index') }}">Tasks</a>
-</nav>
-
-<div class="container">
+<div class="page">
 
     <h1>Add Task</h1>
 
-    @if($errors->any())
+    @if ($errors->any())
+
         <div class="error">
-            @foreach($errors->all() as $error)
-                <p>{{ $error }}</p>
-            @endforeach
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
         </div>
+
     @endif
 
-    <form action="{{ route('tasks.store') }}" method="POST">
+    <form action="{{ route('tasks.store') }}"
+          method="POST">
 
         @csrf
 
-        <label>Task Name</label>
-        <input type="text" name="task_name" value="{{ old('task_name') }}" required>
+        <div class="form-group">
 
-        <label>Description</label>
-        <textarea name="description">{{ old('description') }}</textarea>
+            <label>Task Name</label>
 
-        <label>Status</label>
+            <input type="text"
+                   name="task_name"
+                   value="{{ old('task_name') }}"
+                   placeholder="Enter task name"
+                   required>
 
-        <select name="status">
+        </div>
 
-            <option value="Pending"
-                {{ old('status') == 'Pending' ? 'selected' : '' }}>
-                Pending
-            </option>
+        <div class="form-group">
 
-            <option value="Completed"
-                {{ old('status') == 'Completed' ? 'selected' : '' }}>
-                Completed
-            </option>
+            <label>Description</label>
 
-        </select>
+            <textarea name="description"
+                      placeholder="Enter task description">{{ old('description') }}</textarea>
 
-        <label>Due Date</label>
-        <input type="date" name="due_date" value="{{ old('due_date') }}">
+        </div>
 
-        <button type="submit">
-            Add Task
-        </button>
+        <div class="form-group">
+
+            <label>Status</label>
+
+            <select name="status">
+
+                <option value="Pending">
+                    Pending
+                </option>
+
+                <option value="Completed">
+                    Completed
+                </option>
+
+            </select>
+
+        </div>
+
+        <div class="form-group">
+
+            <label>Due Date</label>
+
+            <input type="date"
+                   name="due_date"
+                   value="{{ old('due_date') }}">
+
+        </div>
+
+        <div class="form-buttons">
+
+            <button type="submit">
+                Save Task
+            </button>
+
+            <a class="cancel"
+               href="{{ route('tasks.index') }}">
+                Cancel
+            </a>
+
+        </div>
 
     </form>
 
 </div>
 
-</body>
-</html>
+@endsection
+
