@@ -1,93 +1,100 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Personal Task Manager</title>
+    <title>Tasks - Personal Task Manager</title>
 
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
             margin: 0;
-            padding: 40px;
+            font-family: Arial, sans-serif;
+            background: #f5f3ff;
+        }
+
+        .navbar {
+            background: #6d28d9;
+            color: white;
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .navbar h2 {
+            margin: 0;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
         }
 
         .container {
-            max-width: 900px;
-            margin: auto;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 20px;
         }
 
-        h1 {
-            margin-top: 0;
-        }
-
-        .add-btn {
-            display: inline-block;
-            background: #2563eb;
+        .button {
+            background: #6d28d9;
             color: white;
-            padding: 10px 15px;
-            text-decoration: none;
+            padding: 9px 14px;
             border-radius: 5px;
-            margin-bottom: 20px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
         }
 
-        .success {
-            background: #d1fae5;
-            color: #065f46;
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 5px;
+        .delete {
+            background: #dc2626;
+        }
+
+        .edit {
+            background: #2563eb;
         }
 
         table {
             width: 100%;
+            background: white;
             border-collapse: collapse;
+            margin-top: 20px;
         }
 
         th, td {
-            padding: 12px;
+            padding: 14px;
             border-bottom: 1px solid #ddd;
             text-align: left;
         }
 
-        th {
-            background: #f1f5f9;
+        .success {
+            background: #dcfce7;
+            color: #166534;
+            padding: 12px;
+            margin-top: 20px;
         }
 
-        .edit-btn {
-            background: #f59e0b;
-            color: white;
-            padding: 6px 10px;
-            text-decoration: none;
-            border-radius: 4px;
-        }
-
-        .delete-btn {
-            background: #dc2626;
-            color: white;
-            padding: 6px 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .status {
-            font-weight: bold;
+        .actions {
+            display: flex;
+            gap: 5px;
         }
     </style>
 </head>
 
 <body>
 
+<nav class="navbar">
+    <h2>Personal Task Manager</h2>
+
+    <div>
+        <a href="{{ route('dashboard') }}">Dashboard</a>
+        <a href="{{ route('tasks.index') }}">Tasks</a>
+    </div>
+</nav>
+
 <div class="container">
 
-    <h1>Personal Task Manager</h1>
+    <h1>My Tasks</h1>
 
-    <a href="{{ route('tasks.create') }}" class="add-btn">
+    <a class="button" href="{{ route('tasks.create') }}">
         + Add Task
     </a>
 
@@ -97,71 +104,64 @@
         </div>
     @endif
 
-    @if($tasks->count() > 0)
+    <table>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Task</th>
-                    <th>Description</th>
-                    <th>Status</th>
-                    <th>Due Date</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
+        <tr>
+            <th>Task</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Due Date</th>
+            <th>Actions</th>
+        </tr>
 
-            <tbody>
+        @forelse($tasks as $task)
 
-                @foreach($tasks as $task)
+        <tr>
+            <td>{{ $task->task_name }}</td>
 
-                    <tr>
-                        <td>{{ $task->task_name }}</td>
+            <td>{{ $task->description ?? 'No description' }}</td>
 
-                        <td>{{ $task->description }}</td>
+            <td>{{ $task->status }}</td>
 
-                        <td class="status">
-                            {{ $task->status }}
-                        </td>
+            <td>{{ $task->due_date ?? 'No date' }}</td>
 
-                        <td>
-                            {{ $task->due_date ?? 'No due date' }}
-                        </td>
+            <td>
+                <div class="actions">
 
-                        <td>
+                    <a class="button edit"
+                       href="{{ route('tasks.edit', $task) }}">
+                        Edit
+                    </a>
 
-                            <a href="{{ route('tasks.edit', $task) }}"
-                               class="edit-btn">
-                                Edit
-                            </a>
+                    <form action="{{ route('tasks.destroy', $task) }}"
+                          method="POST">
 
-                            <form action="{{ route('tasks.destroy', $task) }}"
-                                  method="POST"
-                                  style="display:inline;">
+                        @csrf
+                        @method('DELETE')
 
-                                @csrf
-                                @method('DELETE')
+                        <button class="button delete"
+                                type="submit"
+                                onclick="return confirm('Delete this task?')">
+                            Delete
+                        </button>
 
-                                <button type="submit"
-                                        class="delete-btn"
-                                        onclick="return confirm('Delete this task?')">
-                                    Delete
-                                </button>
+                    </form>
 
-                            </form>
+                </div>
+            </td>
+        </tr>
 
-                        </td>
-                    </tr>
+        @empty
 
-                @endforeach
+        <tr>
+            <td colspan="5">
+                No tasks found.
+            </td>
+        </tr>
 
-            </tbody>
-        </table>
+        @endforelse
 
-    @else
-
-        <p>No tasks yet. Click <strong>Add Task</strong> to create one.</p>
-
-    @endif
+    </table>
 
 </div>
 

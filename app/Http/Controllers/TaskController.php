@@ -7,6 +7,29 @@ use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
+    public function dashboard()
+    {
+        $totalTasks = Task::count();
+
+        $pendingTasks = Task::where('status', 'Pending')->count();
+
+        $completedTasks = Task::where('status', 'Completed')->count();
+
+        $overdueTasks = Task::where('due_date', '<', now()->toDateString())
+            ->where('status', 'Pending')
+            ->count();
+
+        $recentTasks = Task::latest()->take(5)->get();
+
+        return view('dashboard', compact(
+            'totalTasks',
+            'pendingTasks',
+            'completedTasks',
+            'overdueTasks',
+            'recentTasks'
+        ));
+    }
+
     public function index()
     {
         $tasks = Task::latest()->get();
@@ -30,7 +53,8 @@ class TaskController extends Controller
 
         Task::create($request->all());
 
-        return redirect()->route('tasks.index')
+        return redirect()
+            ->route('tasks.index')
             ->with('success', 'Task added successfully.');
     }
 
@@ -50,7 +74,8 @@ class TaskController extends Controller
 
         $task->update($request->all());
 
-        return redirect()->route('tasks.index')
+        return redirect()
+            ->route('tasks.index')
             ->with('success', 'Task updated successfully.');
     }
 
@@ -58,7 +83,8 @@ class TaskController extends Controller
     {
         $task->delete();
 
-        return redirect()->route('tasks.index')
+        return redirect()
+            ->route('tasks.index')
             ->with('success', 'Task deleted successfully.');
     }
 }

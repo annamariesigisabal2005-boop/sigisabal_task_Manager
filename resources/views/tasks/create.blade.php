@@ -1,79 +1,78 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Task</title>
 
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            padding: 40px;
+            background: #f5f3ff;
+            margin: 0;
+        }
+
+        .navbar {
+            background: #6d28d9;
+            color: white;
+            padding: 18px 40px;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
         }
 
         .container {
-            max-width: 600px;
-            margin: auto;
+            max-width: 700px;
+            margin: 40px auto;
             background: white;
             padding: 30px;
             border-radius: 10px;
         }
 
-        h1 {
-            margin-top: 0;
-        }
-
         label {
             display: block;
             margin-top: 15px;
-            margin-bottom: 5px;
             font-weight: bold;
         }
 
         input, textarea, select {
             width: 100%;
             padding: 10px;
-            box-sizing: border-box;
+            margin-top: 5px;
             border: 1px solid #ccc;
             border-radius: 5px;
         }
 
         textarea {
-            height: 120px;
-            resize: vertical;
+            height: 100px;
         }
 
-        .buttons {
+        button {
             margin-top: 20px;
-        }
-
-        .save-btn {
-            background: #2563eb;
+            background: #6d28d9;
             color: white;
-            padding: 10px 15px;
             border: none;
+            padding: 12px 20px;
             border-radius: 5px;
             cursor: pointer;
         }
 
-        .back-btn {
-            margin-left: 10px;
-            text-decoration: none;
-            color: #333;
-        }
-
         .error {
-            background: #fee2e2;
-            color: #991b1b;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
+            color: #dc2626;
+            margin-top: 15px;
         }
     </style>
 </head>
 
 <body>
+
+<nav class="navbar">
+    <strong>Personal Task Manager</strong>
+
+    <a href="{{ route('dashboard') }}">Dashboard</a>
+    <a href="{{ route('tasks.index') }}">Tasks</a>
+</nav>
 
 <div class="container">
 
@@ -81,11 +80,9 @@
 
     @if($errors->any())
         <div class="error">
-            <ul>
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+            @foreach($errors->all() as $error)
+                <p>{{ $error }}</p>
+            @endforeach
         </div>
     @endif
 
@@ -93,19 +90,15 @@
 
         @csrf
 
-        <label for="task_name">Task Name</label>
-        <input type="text"
-               id="task_name"
-               name="task_name"
-               value="{{ old('task_name') }}"
-               required>
+        <label>Task Name</label>
+        <input type="text" name="task_name" value="{{ old('task_name') }}" required>
 
-        <label for="description">Description</label>
-        <textarea id="description"
-                  name="description">{{ old('description') }}</textarea>
+        <label>Description</label>
+        <textarea name="description">{{ old('description') }}</textarea>
 
-        <label for="status">Status</label>
-        <select id="status" name="status">
+        <label>Status</label>
+
+        <select name="status">
 
             <option value="Pending"
                 {{ old('status') == 'Pending' ? 'selected' : '' }}>
@@ -119,23 +112,12 @@
 
         </select>
 
-        <label for="due_date">Due Date</label>
-        <input type="date"
-               id="due_date"
-               name="due_date"
-               value="{{ old('due_date') }}">
+        <label>Due Date</label>
+        <input type="date" name="due_date" value="{{ old('due_date') }}">
 
-        <div class="buttons">
-
-            <button type="submit" class="save-btn">
-                Save Task
-            </button>
-
-            <a href="{{ route('tasks.index') }}" class="back-btn">
-                Cancel
-            </a>
-
-        </div>
+        <button type="submit">
+            Add Task
+        </button>
 
     </form>
 
